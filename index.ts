@@ -14,7 +14,6 @@ class ChatGPT {
   private configuration?: Configuration;
   private openai?: OpenAIApi;
   private models = new Models();
-  private userInput = "";
 
   constructor() {
     this.init();
@@ -27,7 +26,7 @@ class ChatGPT {
     this.openai = new OpenAIApi(this.configuration);
   }
 
-  async startChat() {
+  public async startChat() {
     const input = readline.question();
 
     if (!this.openai) return;

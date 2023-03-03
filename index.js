@@ -50,7 +50,6 @@ var Models = /** @class */ (function () {
 var ChatGPT = /** @class */ (function () {
     function ChatGPT() {
         this.models = new Models();
-        this.userInput = "";
         this.init();
     }
     ChatGPT.prototype.init = function () {
