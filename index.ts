@@ -1,6 +1,6 @@
 import { Configuration, CreateChatCompletionResponse, OpenAIApi } from "openai";
-import readline from "readline-sync";
-import dotenv from "dotenv";
+import * as readline from "readline-sync";
+import * as dotenv from "dotenv";
 import { AxiosResponse } from "axios";
 
 dotenv.config();
@@ -28,30 +28,31 @@ class ChatGPT {
   }
 
   async startChat() {
+    const input = readline.question();
+
     if (!this.openai) return;
-    // this.getUserInput();
+
     try {
       const completion = await this.openai.createChatCompletion({
         model: this.models.turbo,
-        messages: [{ role: "user", content: "hey siri" }],
+        messages: [{ role: "user", content: input }],
       });
 
       this.printAIResponse(completion);
+
+      this.startChat();
     } catch (error) {
       console.error(error);
     }
-  }
-
-  private getUserInput() {
-    this.userInput = readline.question();
   }
 
   private printAIResponse(
     completion: AxiosResponse<CreateChatCompletionResponse>
   ) {
     const { choices } = completion.data;
-    console.log(choices);
-    // console.log(`\nAI: ${completion.data.choices?[0].message.content} \n`);
+    choices.forEach((c) => {
+      console.log(`\nAI: ${c.message?.content} \n`);
+    });
   }
 }
 

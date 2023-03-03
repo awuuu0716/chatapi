@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,9 +35,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _a = require("openai"), Configuration = _a.Configuration, OpenAIApi = _a.OpenAIApi;
-require("dotenv").config();
+exports.__esModule = true;
+var openai_1 = require("openai");
 var readline = require("readline-sync");
+var dotenv = require("dotenv");
+dotenv.config();
 var Models = /** @class */ (function () {
     function Models() {
         this.turbo = "gpt-3.5-turbo";
@@ -51,67 +54,49 @@ var ChatGPT = /** @class */ (function () {
         this.init();
     }
     ChatGPT.prototype.init = function () {
-        this.configuration = new Configuration({
+        this.configuration = new openai_1.Configuration({
             apiKey: process.env.OPENAI_API_KEY
         });
-        this.openai = new OpenAIApi(this.configuration);
+        this.openai = new openai_1.OpenAIApi(this.configuration);
     };
     ChatGPT.prototype.startChat = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var completion, error_1;
+            var input, completion, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
+                        input = readline.question();
+                        if (!this.openai)
+                            return [2 /*return*/];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
                         return [4 /*yield*/, this.openai.createChatCompletion({
                                 model: this.models.turbo,
-                                messages: [{ role: "user", content: "hey siri" }]
+                                messages: [{ role: "user", content: input }]
                             })];
-                    case 1:
+                    case 2:
                         completion = _a.sent();
                         this.printAIResponse(completion);
-                        return [3 /*break*/, 3];
-                    case 2:
+                        this.startChat();
+                        return [3 /*break*/, 4];
+                    case 3:
                         error_1 = _a.sent();
                         console.error(error_1);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
                 }
             });
         });
     };
-    ChatGPT.prototype.getUserInput = function () {
-        this.userInput = readline.question();
-    };
     ChatGPT.prototype.printAIResponse = function (completion) {
-        console.log("\nAI: ".concat(completion.data.choices[0].message.content, " \n"));
+        var choices = completion.data.choices;
+        choices.forEach(function (c) {
+            var _a;
+            console.log("\nAI: ".concat((_a = c.message) === null || _a === void 0 ? void 0 : _a.content, " \n"));
+        });
     };
     return ChatGPT;
 }());
 var chatGPT = new ChatGPT();
 chatGPT.startChat();
-// const configuration = new Configuration({
-//   apiKey: process.env.OPENAI_API_KEY,
-// });
-// const openai = new OpenAIApi(configuration);
-// async function startChat() {
-//   const input = readline.question();
-//   if (input === "bye") return;
-//   try {
-//     // const response = await openai.createCompletion({
-//     //   model: models.davinci,
-//     //   prompt: input,
-//     //   max_tokens: 7,
-//     //   temperature: 0,
-//     // });
-//     // console.log(response.data.choices);
-//     const completion = await openai.createChatCompletion({
-//       model: models.turbo,
-//       messages: [{ role: "user", content: input }],
-//     });
-//     printAIResponse(completion);
-//     startChat();
-//   } catch (err) {
-//     console.log(err);
-//   }
-// }
